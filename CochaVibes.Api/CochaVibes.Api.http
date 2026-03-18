@@ -1,0 +1,6 @@
+@CochaVibes.Api_HostAddress = http://localhost:5191
+
+GET {{CochaVibes.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

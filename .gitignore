@@ -1,0 +1,36 @@
+# Build results
+bin/
+obj/
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+
+# Rider / VS Code
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# .NET Core
+*.runtimeconfig.json
+*.deps.json
+
+# NuGet
+packages/
+*.nupkg
+
+# Environment files
+.env
+
+# Publish
+publish/
+
+# Others
+*.cache
