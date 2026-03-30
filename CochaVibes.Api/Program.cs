@@ -1,7 +1,12 @@
+using CochaVibes.Core.DTOs;
 using CochaVibes.Core.Interfaces;
 using CochaVibes.Infrastructure.Data;
 using CochaVibes.Infrastructure.Mappings;
 using CochaVibes.Infrastructure.Repositories;
+using CochaVibes.Services.Interfaces;
+using CochaVibes.Services.Services;
+using CochaVibes.Services.Validators;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 namespace CochaVibes.Api
@@ -17,7 +22,15 @@ namespace CochaVibes.Api
             builder.Services.AddDbContext<CochaVibesContext>(options =>
                 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
+            
             builder.Services.AddTransient<IEventoRepository, EventoRepository>();
+
+            
+            builder.Services.AddTransient<IEventoService, EventoService>();
+
+            
+            builder.Services.AddTransient<IValidator<EventoBusquedaDto>, EventoBusquedaDtoValidator>();
+            builder.Services.AddTransient<IValidator<EventoIdDto>, EventoIdDtoValidator>();
 
             builder.Services.AddControllers()
                 .AddNewtonsoftJson(options =>

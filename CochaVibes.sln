@@ -4,22 +4,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.14.36616.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CochaVibes.Api", "CochaVibes.Api\CochaVibes.Api.csproj", "{F41852CF-6798-4027-94CD-20B690486C55}"
-	ProjectSection(ProjectDependencies) = postProject
-		{4B054E59-37D7-4141-A634-BFAF6C70E89A} = {4B054E59-37D7-4141-A634-BFAF6C70E89A}
-		{5986425E-EE8F-4D41-BC79-7BF2CF818F05} = {5986425E-EE8F-4D41-BC79-7BF2CF818F05}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CochaVibes.Core", "CochaVibes.Core\CochaVibes.Core.csproj", "{5986425E-EE8F-4D41-BC79-7BF2CF818F05}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CochaVibes.Infrastructure", "CochaVibes.Infrastructure\CochaVibes.Infrastructure.csproj", "{4B054E59-37D7-4141-A634-BFAF6C70E89A}"
-	ProjectSection(ProjectDependencies) = postProject
-		{5986425E-EE8F-4D41-BC79-7BF2CF818F05} = {5986425E-EE8F-4D41-BC79-7BF2CF818F05}
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementos de la solución", "Elementos de la solución", "{D107F4C8-89CC-BEA8-D3D7-CA6B7733353D}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CochaVibes.Services", "CochaVibes.Services\CochaVibes.Services.csproj", "{96219418-BB6E-4D8A-BDC6-EFE83A1CB4C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +34,10 @@ Global
 		{4B054E59-37D7-4141-A634-BFAF6C70E89A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B054E59-37D7-4141-A634-BFAF6C70E89A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B054E59-37D7-4141-A634-BFAF6C70E89A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96219418-BB6E-4D8A-BDC6-EFE83A1CB4C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96219418-BB6E-4D8A-BDC6-EFE83A1CB4C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96219418-BB6E-4D8A-BDC6-EFE83A1CB4C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96219418-BB6E-4D8A-BDC6-EFE83A1CB4C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
