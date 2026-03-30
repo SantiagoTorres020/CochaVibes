@@ -13,7 +13,7 @@ namespace CochaVibes.Infrastructure.Data.Configurations
             entity.ToTable("ubicacion");
 
             entity.Property(e => e.IdUbicacion).HasColumnName("id_ubicacion");
-            entity.Property(e => e.NombreLugar).HasColumnName("nombre_lugar").HasMaxLength(150);
+            entity.Property(e => e.NombreLugar).HasColumnName("nombre").HasMaxLength(100);
             entity.Property(e => e.Zona).HasColumnName("zona").HasMaxLength(100);
             entity.Property(e => e.Direccion).HasColumnName("direccion").HasMaxLength(200);
         }
