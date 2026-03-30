@@ -53,9 +53,9 @@ namespace CochaVibes.Services.Services
             if (string.IsNullOrWhiteSpace(estado))
                 return false;
 
-            var estadosVisibles = new[] { "Publicado", "Activo", "Disponible" };
+            var estadosVisibles = new[] { "activo" };
 
-            return estadosVisibles.Contains(estado, StringComparer.OrdinalIgnoreCase);
+            return estadosVisibles.Contains(estado.Trim(), StringComparer.OrdinalIgnoreCase);
         }
     }
 }
