@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace CochaVibes.Core.Entities
 {
-    public partial class Usuario
+    public partial class Usuario : BaseEntity
     {
         public int IdUsuario { get; set; }
+
+        public override int Id => IdUsuario;
 
         public string Nombre { get; set; } = null!;
 

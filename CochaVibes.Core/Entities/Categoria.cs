@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CochaVibes.Core.Entities
+﻿namespace CochaVibes.Core.Entities
 {
-    public partial class Categoria
+    public partial class Categoria : BaseEntity
     {
         public int IdCategoria { get; set; }
+
+        public override int Id => IdCategoria;
 
         public string Nombre { get; set; } = null!;
 

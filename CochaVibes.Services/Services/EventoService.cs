@@ -48,6 +48,21 @@ namespace CochaVibes.Services.Services
             return evento;
         }
 
+        public async Task InsertEvento(Evento evento)
+        {
+            await _eventoRepository.Add(evento);
+        }
+
+        public async Task UpdateEvento(Evento evento)
+        {
+            await _eventoRepository.Update(evento);
+        }
+
+        public async Task DeleteEvento(int id)
+        {
+            await _eventoRepository.Delete(id);
+        }
+
         private bool EsVisibleAlPublico(string? estado)
         {
             if (string.IsNullOrWhiteSpace(estado))

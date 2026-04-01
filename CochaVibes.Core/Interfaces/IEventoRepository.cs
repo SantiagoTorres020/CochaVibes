@@ -2,7 +2,7 @@
 
 namespace CochaVibes.Core.Interfaces
 {
-    public interface IEventoRepository
+    public interface IEventoRepository : IBaseRepository<Evento>
     {
         Task<IEnumerable<Evento>> BuscarEventosAsync(
             string? texto,
@@ -11,11 +11,5 @@ namespace CochaVibes.Core.Interfaces
             int? idUbicacion);
 
         Task<Evento?> GetEventoDetalleByIdAsync(int id);
-
-        Task<IEnumerable<Evento>> GetAllEventosAsync();
-        Task<Evento?> GetEventoByIdAsync(int id);
-        Task InsertEvento(Evento evento);
-        Task UpdateEvento(Evento evento);
-        Task DeleteEvento(Evento evento);
     }
 }

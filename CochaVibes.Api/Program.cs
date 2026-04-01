@@ -22,15 +22,13 @@ namespace CochaVibes.Api
             builder.Services.AddDbContext<CochaVibesContext>(options =>
                 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
-            
             builder.Services.AddTransient<IEventoRepository, EventoRepository>();
-
-            
             builder.Services.AddTransient<IEventoService, EventoService>();
 
-            
             builder.Services.AddTransient<IValidator<EventoBusquedaDto>, EventoBusquedaDtoValidator>();
             builder.Services.AddTransient<IValidator<EventoIdDto>, EventoIdDtoValidator>();
+            builder.Services.AddTransient<CrearEventoDtoValidator>();
+            builder.Services.AddTransient<ActualizarEventoDtoValidator>();
 
             builder.Services.AddControllers()
                 .AddNewtonsoftJson(options =>
@@ -53,11 +51,8 @@ namespace CochaVibes.Api
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
             app.MapControllers();
-
             app.Run();
         }
     }

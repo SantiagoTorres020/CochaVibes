@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CochaVibes.Core.Entities
+﻿namespace CochaVibes.Core.Entities
 {
-    public partial class Evento
+    public partial class Evento : BaseEntity
     {
         public int IdEvento { get; set; }
+
+        public override int Id => IdEvento;
 
         public string Titulo { get; set; } = null!;
 

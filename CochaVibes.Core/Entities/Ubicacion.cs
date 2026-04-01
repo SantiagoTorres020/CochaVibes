@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CochaVibes.Core.Entities
+﻿namespace CochaVibes.Core.Entities
 {
-    public partial class Ubicacion
+    public partial class Ubicacion : BaseEntity
     {
         public int IdUbicacion { get; set; }
+
+        public override int Id => IdUbicacion;
 
         public string NombreLugar { get; set; } = null!;
 

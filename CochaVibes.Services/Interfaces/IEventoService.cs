@@ -7,5 +7,8 @@ namespace CochaVibes.Services.Interfaces
     {
         Task<IEnumerable<Evento>> BuscarEventosAsync(EventoBusquedaDto filtro);
         Task<Evento?> GetEventoDetalleByIdAsync(int id);
+        Task InsertEvento(Evento evento);
+        Task UpdateEvento(Evento evento);
+        Task DeleteEvento(int id);
     }
 }
