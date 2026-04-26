@@ -7,10 +7,6 @@ namespace CochaVibes.Services.Validators
     {
         public CrearEventoDtoValidator()
         {
-            RuleFor(x => x.IdEvento)
-                .Equal(0)
-                .WithMessage("El ID del evento debe ser 0 o no enviarse para crear un nuevo evento.");
-
             RuleFor(x => x.Titulo)
                 .NotEmpty().WithMessage("El título es obligatorio.")
                 .MaximumLength(150).WithMessage("El título no puede exceder los 150 caracteres.");

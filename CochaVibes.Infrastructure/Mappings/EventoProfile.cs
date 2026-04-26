@@ -14,6 +14,7 @@ namespace CochaVibes.Infrastructure.Mappings
                 .ForMember(dest => dest.HoraFin, opt => opt.MapFrom(src => src.HoraFin.ToString()));
 
             CreateMap<EventoDto, Evento>()
+                .ForMember(dest => dest.IdEvento, opt => opt.Ignore())
                 .ForMember(dest => dest.Fecha, opt => opt.MapFrom(src => Convert.ToDateTime(src.Fecha)))
                 .ForMember(dest => dest.HoraInicio, opt => opt.MapFrom(src => TimeSpan.Parse(src.HoraInicio)))
                 .ForMember(dest => dest.HoraFin, opt => opt.MapFrom(src => TimeSpan.Parse(src.HoraFin)));

@@ -1,4 +1,5 @@
 using CochaVibes.Core.DTOs;
+using CochaVibes.Core.Entities;
 using CochaVibes.Core.Interfaces;
 using CochaVibes.Infrastructure.Data;
 using CochaVibes.Infrastructure.Mappings;
@@ -22,7 +23,7 @@ namespace CochaVibes.Api
             builder.Services.AddDbContext<CochaVibesContext>(options =>
                 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
-            builder.Services.AddTransient<IEventoRepository, EventoRepository>();
+            builder.Services.AddTransient<IBaseRepository<Evento>, BaseRepository<Evento>>();
             builder.Services.AddTransient<IEventoService, EventoService>();
 
             builder.Services.AddTransient<IValidator<EventoBusquedaDto>, EventoBusquedaDtoValidator>();

@@ -7,9 +7,9 @@ namespace CochaVibes.Services.Services
 {
     public class EventoService : IEventoService
     {
-        private readonly IEventoRepository _eventoRepository;
+        private readonly IBaseRepository<Evento> _eventoRepository;
 
-        public EventoService(IEventoRepository eventoRepository)
+        public EventoService(IBaseRepository<Evento> eventoRepository)
         {
             _eventoRepository = eventoRepository;
         }
@@ -23,13 +23,34 @@ namespace CochaVibes.Services.Services
                 fecha = Convert.ToDateTime(filtro.Fecha);
             }
 
-            var eventos = await _eventoRepository.BuscarEventosAsync(
-                filtro.Texto,
-                filtro.IdCategoria,
-                fecha,
-                filtro.IdUbicacion);
+            var eventos = await _eventoRepository.GetAll(
+                e => e.Categoria,
+                e => e.Ubicacion,
+                e => e.Usuario);
 
-            return eventos
+            var query = eventos.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(filtro.Texto))
+            {
+                query = query.Where(e => e.Titulo.Contains(filtro.Texto));
+            }
+
+            if (filtro.IdCategoria.HasValue)
+            {
+                query = query.Where(e => e.IdCategoria == filtro.IdCategoria.Value);
+            }
+
+            if (fecha.HasValue)
+            {
+                query = query.Where(e => e.Fecha.Date == fecha.Value.Date);
+            }
+
+            if (filtro.IdUbicacion.HasValue)
+            {
+                query = query.Where(e => e.IdUbicacion == filtro.IdUbicacion.Value);
+            }
+
+            return query
                 .Where(e => EsVisibleAlPublico(e.Estado))
                 .OrderBy(e => e.Fecha)
                 .ThenBy(e => e.HoraInicio);
@@ -37,7 +58,11 @@ namespace CochaVibes.Services.Services
 
         public async Task<Evento?> GetEventoDetalleByIdAsync(int id)
         {
-            var evento = await _eventoRepository.GetEventoDetalleByIdAsync(id);
+            var evento = await _eventoRepository.GetById(
+                id,
+                e => e.Categoria,
+                e => e.Ubicacion,
+                e => e.Usuario);
 
             if (evento == null)
                 return null;

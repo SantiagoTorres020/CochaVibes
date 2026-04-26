@@ -2,6 +2,7 @@
 using CochaVibes.Core.Interfaces;
 using CochaVibes.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace CochaVibes.Infrastructure.Repositories
 {
@@ -14,14 +15,28 @@ namespace CochaVibes.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<T>> GetAll()
+        public async Task<IEnumerable<T>> GetAll(params Expression<Func<T, object>>[] includes)
         {
-            return await _context.Set<T>().ToListAsync();
+            IQueryable<T> query = _context.Set<T>();
+
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return await query.ToListAsync();
         }
 
-        public async Task<T?> GetById(int id)
+        public async Task<T?> GetById(int id, params Expression<Func<T, object>>[] includes)
         {
-            return await _context.Set<T>().FindAsync(id);
+            IQueryable<T> query = _context.Set<T>();
+
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return await query.FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task Add(T entity)
