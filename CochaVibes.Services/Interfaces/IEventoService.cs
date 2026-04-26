@@ -6,9 +6,15 @@ namespace CochaVibes.Services.Interfaces
     public interface IEventoService
     {
         Task<IEnumerable<Evento>> BuscarEventosAsync(EventoBusquedaDto filtro);
+
+        Task<IEnumerable<Evento>> BuscarEventosDapperAsync(int limit = 10);
+
         Task<Evento?> GetEventoDetalleByIdAsync(int id);
+
         Task InsertEvento(Evento evento);
-        Task UpdateEvento(Evento evento);
+
+        void UpdateEvento(Evento evento);
+
         Task DeleteEvento(int id);
     }
 }

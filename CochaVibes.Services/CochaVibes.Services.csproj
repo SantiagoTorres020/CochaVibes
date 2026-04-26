@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CochaVibes.Core\CochaVibes.Core.csproj" />
+    <ProjectReference Include="..\CochaVibes.Infrastructure\CochaVibes.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

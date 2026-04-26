@@ -1,5 +1,5 @@
+using CochaVibes.Api.Filters;
 using CochaVibes.Core.DTOs;
-using CochaVibes.Core.Entities;
 using CochaVibes.Core.Interfaces;
 using CochaVibes.Infrastructure.Data;
 using CochaVibes.Infrastructure.Mappings;
@@ -23,19 +23,27 @@ namespace CochaVibes.Api
             builder.Services.AddDbContext<CochaVibesContext>(options =>
                 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
-            builder.Services.AddTransient<IBaseRepository<Evento>, BaseRepository<Evento>>();
             builder.Services.AddTransient<IEventoService, EventoService>();
+
+            builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
+            builder.Services.AddScoped<IDapperContext, DapperContext>();
 
             builder.Services.AddTransient<IValidator<EventoBusquedaDto>, EventoBusquedaDtoValidator>();
             builder.Services.AddTransient<IValidator<EventoIdDto>, EventoIdDtoValidator>();
-            builder.Services.AddTransient<CrearEventoDtoValidator>();
-            builder.Services.AddTransient<ActualizarEventoDtoValidator>();
+            builder.Services.AddScoped<CrearEventoDtoValidator>();
+            builder.Services.AddScoped<ActualizarEventoDtoValidator>();
 
             builder.Services.AddControllers()
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling =
                         Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                })
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.SuppressModelStateInvalidFilter = true;
                 });
 
             builder.Services.AddAutoMapper(typeof(EventoProfile).Assembly);
@@ -45,6 +53,8 @@ namespace CochaVibes.Api
 
             var app = builder.Build();
 
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -52,8 +62,11 @@ namespace CochaVibes.Api
             }
 
             app.UseHttpsRedirection();
+
             app.UseAuthorization();
+
             app.MapControllers();
+
             app.Run();
         }
     }

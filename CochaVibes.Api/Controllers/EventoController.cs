@@ -14,10 +14,15 @@ namespace CochaVibes.Api.Controllers
     public class EventoController : ControllerBase
     {
         private readonly IEventoService _eventoService;
+
         private readonly IMapper _mapper;
+
         private readonly IValidator<EventoBusquedaDto> _busquedaValidator;
+
         private readonly IValidator<EventoIdDto> _idValidator;
+
         private readonly IValidator<EventoDto> _crearValidator;
+
         private readonly IValidator<EventoDto> _actualizarValidator;
 
         public EventoController(
@@ -42,22 +47,24 @@ namespace CochaVibes.Api.Controllers
             var validationResult = await _busquedaValidator.ValidateAsync(filtro);
 
             if (!validationResult.IsValid)
-            {
-                return BadRequest(new
-                {
-                    message = "Error de validación",
-                    errors = validationResult.Errors.Select(e => new
-                    {
-                        field = e.PropertyName,
-                        error = e.ErrorMessage
-                    })
-                });
-            }
+                throw new ValidationException(validationResult.Errors);
 
             var eventos = await _eventoService.BuscarEventosAsync(filtro);
             var eventosDto = _mapper.Map<IEnumerable<EventoListaDto>>(eventos);
 
             var response = new ApiResponse<IEnumerable<EventoListaDto>>(eventosDto);
+
+            return Ok(response);
+        }
+
+        [HttpGet("dapper")]
+        public async Task<IActionResult> BuscarEventosDapper([FromQuery] int limit = 10)
+        {
+            var eventos = await _eventoService.BuscarEventosDapperAsync(limit);
+            var eventosDto = _mapper.Map<IEnumerable<EventoDto>>(eventos);
+
+            var response = new ApiResponse<IEnumerable<EventoDto>>(eventosDto);
+
             return Ok(response);
         }
 
@@ -68,17 +75,7 @@ namespace CochaVibes.Api.Controllers
             var validationResult = await _idValidator.ValidateAsync(dto);
 
             if (!validationResult.IsValid)
-            {
-                return BadRequest(new
-                {
-                    message = "Error de validación",
-                    errors = validationResult.Errors.Select(e => new
-                    {
-                        field = e.PropertyName,
-                        error = e.ErrorMessage
-                    })
-                });
-            }
+                throw new ValidationException(validationResult.Errors);
 
             var evento = await _eventoService.GetEventoDetalleByIdAsync(id);
 
@@ -102,17 +99,7 @@ namespace CochaVibes.Api.Controllers
             var validationResult = await _crearValidator.ValidateAsync(eventoDto);
 
             if (!validationResult.IsValid)
-            {
-                return BadRequest(new
-                {
-                    message = "Error de validación",
-                    errors = validationResult.Errors.Select(e => new
-                    {
-                        field = e.PropertyName,
-                        error = e.ErrorMessage
-                    })
-                });
-            }
+                throw new ValidationException(validationResult.Errors);
 
             var evento = _mapper.Map<Evento>(eventoDto);
 
@@ -139,32 +126,12 @@ namespace CochaVibes.Api.Controllers
             var idValidation = await _idValidator.ValidateAsync(idDto);
 
             if (!idValidation.IsValid)
-            {
-                return BadRequest(new
-                {
-                    message = "Error de validación",
-                    errors = idValidation.Errors.Select(e => new
-                    {
-                        field = e.PropertyName,
-                        error = e.ErrorMessage
-                    })
-                });
-            }
+                throw new ValidationException(idValidation.Errors);
 
             var validationResult = await _actualizarValidator.ValidateAsync(eventoDto);
 
             if (!validationResult.IsValid)
-            {
-                return BadRequest(new
-                {
-                    message = "Error de validación",
-                    errors = validationResult.Errors.Select(e => new
-                    {
-                        field = e.PropertyName,
-                        error = e.ErrorMessage
-                    })
-                });
-            }
+                throw new ValidationException(validationResult.Errors);
 
             var eventoExistente = await _eventoService.GetEventoDetalleByIdAsync(id);
 
@@ -177,7 +144,8 @@ namespace CochaVibes.Api.Controllers
             }
 
             _mapper.Map(eventoDto, eventoExistente);
-            await _eventoService.UpdateEvento(eventoExistente);
+
+            _eventoService.UpdateEvento(eventoExistente);
 
             var resultDto = _mapper.Map<EventoDto>(eventoExistente);
             var response = new ApiResponse<EventoDto>(resultDto);
@@ -192,17 +160,7 @@ namespace CochaVibes.Api.Controllers
             var validationResult = await _idValidator.ValidateAsync(dto);
 
             if (!validationResult.IsValid)
-            {
-                return BadRequest(new
-                {
-                    message = "Error de validación",
-                    errors = validationResult.Errors.Select(e => new
-                    {
-                        field = e.PropertyName,
-                        error = e.ErrorMessage
-                    })
-                });
-            }
+                throw new ValidationException(validationResult.Errors);
 
             var evento = await _eventoService.GetEventoDetalleByIdAsync(id);
 
@@ -216,8 +174,7 @@ namespace CochaVibes.Api.Controllers
 
             await _eventoService.DeleteEvento(id);
 
-            var response = new ApiResponse<bool>(true);
-            return Ok(response);
+            return NoContent();
         }
     }
 }

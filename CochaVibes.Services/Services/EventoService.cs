@@ -1,17 +1,22 @@
 ﻿using CochaVibes.Core.DTOs;
 using CochaVibes.Core.Entities;
+using CochaVibes.Core.Enum;
+using CochaVibes.Core.Exceptions;
+using CochaVibes.Core.Helpers;
 using CochaVibes.Core.Interfaces;
+using CochaVibes.Infrastructure.Queries;
 using CochaVibes.Services.Interfaces;
+using System.Net;
 
 namespace CochaVibes.Services.Services
 {
     public class EventoService : IEventoService
     {
-        private readonly IBaseRepository<Evento> _eventoRepository;
+        public readonly IUnitOfWork _unitOfWork;
 
-        public EventoService(IBaseRepository<Evento> eventoRepository)
+        public EventoService(IUnitOfWork unitOfWork)
         {
-            _eventoRepository = eventoRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IEnumerable<Evento>> BuscarEventosAsync(EventoBusquedaDto filtro)
@@ -20,10 +25,15 @@ namespace CochaVibes.Services.Services
 
             if (!string.IsNullOrWhiteSpace(filtro.Fecha))
             {
-                fecha = Convert.ToDateTime(filtro.Fecha);
+                string? fechaAux = Procesos.ParseFechaFlexible(filtro.Fecha);
+
+                if (fechaAux != null)
+                {
+                    fecha = Convert.ToDateTime(fechaAux);
+                }
             }
 
-            var eventos = await _eventoRepository.GetAll(
+            var eventos = await _unitOfWork.EventoRepository.GetAll(
                 e => e.Categoria,
                 e => e.Ubicacion,
                 e => e.Usuario);
@@ -32,7 +42,7 @@ namespace CochaVibes.Services.Services
 
             if (!string.IsNullOrWhiteSpace(filtro.Texto))
             {
-                query = query.Where(e => e.Titulo.Contains(filtro.Texto));
+                query = query.Where(e => e.Titulo.ToLower().Contains(filtro.Texto.ToLower()));
             }
 
             if (filtro.IdCategoria.HasValue)
@@ -56,9 +66,21 @@ namespace CochaVibes.Services.Services
                 .ThenBy(e => e.HoraInicio);
         }
 
+        public async Task<IEnumerable<Evento>> BuscarEventosDapperAsync(int limit = 10)
+        {
+            var sql = _unitOfWork.DapperContext.Provider switch
+            {
+                DataBaseProvider.SqlServer => Primero.unoSql,
+                DataBaseProvider.MySql => Primero.unoMySql,
+                _ => throw new NotSupportedException("Provider no soportado")
+            };
+
+            return await _unitOfWork.DapperContext.QueryAsync<Evento>(sql, new { Limit = limit });
+        }
+
         public async Task<Evento?> GetEventoDetalleByIdAsync(int id)
         {
-            var evento = await _eventoRepository.GetById(
+            var evento = await _unitOfWork.EventoRepository.GetById(
                 id,
                 e => e.Categoria,
                 e => e.Ubicacion,
@@ -75,17 +97,35 @@ namespace CochaVibes.Services.Services
 
         public async Task InsertEvento(Evento evento)
         {
-            await _eventoRepository.Add(evento);
+            var categoria = await _unitOfWork.CategoriaRepository.GetById(evento.IdCategoria);
+
+            if (categoria == null)
+                throw new BussinesException("La categoría no existe.", HttpStatusCode.BadRequest);
+
+            var ubicacion = await _unitOfWork.UbicacionRepository.GetById(evento.IdUbicacion);
+
+            if (ubicacion == null)
+                throw new BussinesException("La ubicación no existe.", HttpStatusCode.BadRequest);
+
+            var usuario = await _unitOfWork.UsuarioRepository.GetById(evento.IdUsuario);
+
+            if (usuario == null)
+                throw new BussinesException("El usuario no existe.", HttpStatusCode.BadRequest);
+
+            await _unitOfWork.EventoRepository.Add(evento);
+            await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task UpdateEvento(Evento evento)
+        public void UpdateEvento(Evento evento)
         {
-            await _eventoRepository.Update(evento);
+            _unitOfWork.EventoRepository.Update(evento);
+            _unitOfWork.SaveChanges();
         }
 
         public async Task DeleteEvento(int id)
         {
-            await _eventoRepository.Delete(id);
+            await _unitOfWork.EventoRepository.Delete(id);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         private bool EsVisibleAlPublico(string? estado)

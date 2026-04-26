@@ -10,14 +10,17 @@ namespace CochaVibes.Infrastructure.Repositories
     {
         protected readonly CochaVibesContext _context;
 
+        protected readonly DbSet<T> _entities;
+
         public BaseRepository(CochaVibesContext context)
         {
             _context = context;
+            _entities = context.Set<T>();
         }
 
         public async Task<IEnumerable<T>> GetAll(params Expression<Func<T, object>>[] includes)
         {
-            IQueryable<T> query = _context.Set<T>();
+            IQueryable<T> query = _entities;
 
             foreach (var include in includes)
             {
@@ -29,7 +32,7 @@ namespace CochaVibes.Infrastructure.Repositories
 
         public async Task<T?> GetById(int id, params Expression<Func<T, object>>[] includes)
         {
-            IQueryable<T> query = _context.Set<T>();
+            IQueryable<T> query = _entities;
 
             foreach (var include in includes)
             {
@@ -41,25 +44,22 @@ namespace CochaVibes.Infrastructure.Repositories
 
         public async Task Add(T entity)
         {
-            await _context.Set<T>().AddAsync(entity);
-            await _context.SaveChangesAsync();
+            await _entities.AddAsync(entity);
         }
 
-        public async Task Update(T entity)
+        public void Update(T entity)
         {
-            _context.Set<T>().Update(entity);
-            await _context.SaveChangesAsync();
+            _entities.Update(entity);
         }
 
         public async Task Delete(int id)
         {
-            var entity = await GetById(id);
+            T? entity = await GetById(id);
 
             if (entity == null)
                 throw new Exception("Registro no encontrado");
 
-            _context.Set<T>().Remove(entity);
-            await _context.SaveChangesAsync();
+            _entities.Remove(entity);
         }
     }
 }
