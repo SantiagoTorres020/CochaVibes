@@ -6,6 +6,7 @@ using CochaVibes.Core.Helpers;
 using CochaVibes.Core.Interfaces;
 using CochaVibes.Infrastructure.Queries;
 using CochaVibes.Services.Interfaces;
+using CochaVibes.Infrastructure.Queries.Eventos;
 using System.Net;
 
 namespace CochaVibes.Services.Services
@@ -68,14 +69,22 @@ namespace CochaVibes.Services.Services
 
         public async Task<IEnumerable<Evento>> BuscarEventosDapperAsync(int limit = 10)
         {
-            var sql = _unitOfWork.DapperContext.Provider switch
-            {
-                DataBaseProvider.SqlServer => Primero.unoSql,
-                DataBaseProvider.MySql => Primero.unoMySql,
-                _ => throw new NotSupportedException("Provider no soportado")
-            };
+            return await _unitOfWork.DapperContext.QueryAsync<Evento>(
+                BuscarEventosActivosQuery.MySql,
+                new { Limit = limit });
+        }
 
-            return await _unitOfWork.DapperContext.QueryAsync<Evento>(sql, new { Limit = limit });
+        public async Task<EventoDetalleDto?> GetEventoDetalleDapperByIdAsync(int id)
+        {
+            return await _unitOfWork.DapperContext.QueryFirstOrDefaultAsync<EventoDetalleDto>(
+                BuscarEventoDetallePorIdQuery.MySql,
+                new { IdEvento = id });
+        }
+
+        public async Task<int> GetCantidadEventosActivosAsync()
+        {
+            return await _unitOfWork.DapperContext.ExecuteScalarAsync<int>(
+                ContarEventosActivosQuery.MySql);
         }
 
         public async Task<Evento?> GetEventoDetalleByIdAsync(int id)

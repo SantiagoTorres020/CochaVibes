@@ -11,6 +11,10 @@ namespace CochaVibes.Services.Interfaces
 
         Task<Evento?> GetEventoDetalleByIdAsync(int id);
 
+        Task<EventoDetalleDto?> GetEventoDetalleDapperByIdAsync(int id);
+
+        Task<int> GetCantidadEventosActivosAsync();
+
         Task InsertEvento(Evento evento);
 
         void UpdateEvento(Evento evento);

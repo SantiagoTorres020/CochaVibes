@@ -39,7 +39,9 @@ namespace CochaVibes.Infrastructure.Repositories
                 query = query.Include(include);
             }
 
-            return await query.FirstOrDefaultAsync(e => e.Id == id);
+            var keyName = GetPrimaryKeyName();
+
+            return await query.FirstOrDefaultAsync(e => EF.Property<int>(e, keyName) == id);
         }
 
         public async Task Add(T entity)
@@ -60,6 +62,26 @@ namespace CochaVibes.Infrastructure.Repositories
                 throw new Exception("Registro no encontrado");
 
             _entities.Remove(entity);
+        }
+
+        private string GetPrimaryKeyName()
+        {
+            var entityType = _context.Model.FindEntityType(typeof(T));
+
+            if (entityType == null)
+                throw new Exception("No se encontró la entidad en el modelo.");
+
+            var primaryKey = entityType.FindPrimaryKey();
+
+            if (primaryKey == null)
+                throw new Exception("No se encontró la clave primaria de la entidad.");
+
+            var property = primaryKey.Properties.FirstOrDefault();
+
+            if (property == null)
+                throw new Exception("No se encontró la propiedad de clave primaria.");
+
+            return property.Name;
         }
     }
 }

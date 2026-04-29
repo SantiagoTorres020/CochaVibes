@@ -10,6 +10,7 @@ using CochaVibes.Services.Validators;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace CochaVibes.Api
 {
     public class Program
@@ -24,6 +25,8 @@ namespace CochaVibes.Api
                 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
             builder.Services.AddTransient<IEventoService, EventoService>();
+            builder.Services.AddTransient<IComentarioService, ComentarioService>();
+            builder.Services.AddTransient<IAsistenciaService, AsistenciaService>();
 
             builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
@@ -32,8 +35,14 @@ namespace CochaVibes.Api
 
             builder.Services.AddTransient<IValidator<EventoBusquedaDto>, EventoBusquedaDtoValidator>();
             builder.Services.AddTransient<IValidator<EventoIdDto>, EventoIdDtoValidator>();
+            builder.Services.AddTransient<IValidator<ComentarioIdDto>, ComentarioIdDtoValidator>();
+
             builder.Services.AddScoped<CrearEventoDtoValidator>();
             builder.Services.AddScoped<ActualizarEventoDtoValidator>();
+            builder.Services.AddScoped<CrearComentarioDtoValidator>();
+            builder.Services.AddScoped<ActualizarComentarioDtoValidator>();
+            builder.Services.AddScoped<CrearAsistenciaDtoValidator>();
+            builder.Services.AddScoped<ActualizarAsistenciaDtoValidator>();
 
             builder.Services.AddControllers()
                 .AddNewtonsoftJson(options =>
