@@ -3,6 +3,7 @@ using CochaVibes.Core.Exceptions;
 using CochaVibes.Core.Interfaces;
 using CochaVibes.Infrastructure.Queries.Asistencias;
 using CochaVibes.Services.Interfaces;
+using CochaVibes.Core.QueryFilters;
 using System.Net;
 
 namespace CochaVibes.Services.Services
@@ -126,6 +127,17 @@ namespace CochaVibes.Services.Services
             var estadosVisibles = new[] { "activo" };
 
             return estadosVisibles.Contains(estado.Trim(), StringComparer.OrdinalIgnoreCase);
+        }
+        public async Task<IEnumerable<AsistenciaListaDto>> GetAsistenciasFiltradasAsync(AsistenciaQueryFilter filtro)
+        {
+            return await _unitOfWork.DapperContext.QueryAsync<AsistenciaListaDto>(
+                FiltrarAsistenciasQuery.MySql,
+                new
+                {
+                    filtro.IdEvento,
+                    filtro.IdUsuario,
+                    Estado = string.IsNullOrWhiteSpace(filtro.Estado) ? null : filtro.Estado.Trim()
+                });
         }
     }
 }

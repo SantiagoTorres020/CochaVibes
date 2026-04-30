@@ -1,5 +1,6 @@
 ﻿using CochaVibes.Core.DTOs;
 using CochaVibes.Core.Entities;
+using CochaVibes.Core.QueryFilters;
 
 namespace CochaVibes.Services.Interfaces
 {
@@ -18,5 +19,6 @@ namespace CochaVibes.Services.Interfaces
         void UpdateComentario(Comentario comentario);
 
         Task DeleteComentario(int idComentario);
+        Task<IEnumerable<ComentarioListaDto>> GetComentariosFiltradosAsync(ComentarioQueryFilter filtro);
     }
 }

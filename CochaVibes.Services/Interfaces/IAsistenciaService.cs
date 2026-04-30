@@ -1,4 +1,5 @@
 ﻿using CochaVibes.Core.DTOs;
+using CochaVibes.Core.QueryFilters;
 
 namespace CochaVibes.Services.Interfaces
 {
@@ -15,5 +16,6 @@ namespace CochaVibes.Services.Interfaces
         Task UpdateAsistencia(AsistenciaDto asistenciaDto);
 
         Task DeleteAsistencia(int idUsuario, int idEvento);
+        Task<IEnumerable<AsistenciaListaDto>> GetAsistenciasFiltradasAsync(AsistenciaQueryFilter filtro);
     }
 }

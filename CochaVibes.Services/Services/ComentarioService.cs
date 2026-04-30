@@ -4,6 +4,8 @@ using CochaVibes.Core.Exceptions;
 using CochaVibes.Core.Interfaces;
 using CochaVibes.Infrastructure.Queries.Comentarios;
 using CochaVibes.Services.Interfaces;
+using CochaVibes.Core.Helpers;
+using CochaVibes.Core.QueryFilters;
 using System.Net;
 
 namespace CochaVibes.Services.Services
@@ -123,6 +125,26 @@ namespace CochaVibes.Services.Services
             var estadosValidos = new[] { "visible", "oculto", "eliminado" };
 
             return estadosValidos.Contains(estado.Trim(), StringComparer.OrdinalIgnoreCase);
+        }
+        public async Task<IEnumerable<ComentarioListaDto>> GetComentariosFiltradosAsync(ComentarioQueryFilter filtro)
+        {
+            string? fecha = null;
+
+            if (!string.IsNullOrWhiteSpace(filtro.Fecha))
+            {
+                fecha = Procesos.ParseFechaFlexible(filtro.Fecha);
+            }
+
+            return await _unitOfWork.DapperContext.QueryAsync<ComentarioListaDto>(
+                FiltrarComentariosQuery.MySql,
+                new
+                {
+                    filtro.IdEvento,
+                    filtro.IdUsuario,
+                    Estado = string.IsNullOrWhiteSpace(filtro.Estado) ? null : filtro.Estado.Trim(),
+                    Fecha = fecha,
+                    Texto = string.IsNullOrWhiteSpace(filtro.Texto) ? null : filtro.Texto.Trim()
+                });
         }
     }
 }

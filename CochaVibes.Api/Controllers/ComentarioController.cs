@@ -2,6 +2,7 @@
 using CochaVibes.Api.Responses;
 using CochaVibes.Core.DTOs;
 using CochaVibes.Core.Entities;
+using CochaVibes.Core.QueryFilters;
 using CochaVibes.Services.Interfaces;
 using CochaVibes.Services.Validators;
 using FluentValidation;
@@ -25,13 +26,16 @@ namespace CochaVibes.Api.Controllers
 
         private readonly IValidator<ComentarioDto> _actualizarValidator;
 
+        private readonly IValidator<ComentarioQueryFilter> _comentarioFilterValidator;
+
         public ComentarioController(
             IComentarioService comentarioService,
             IMapper mapper,
             IValidator<EventoIdDto> eventoIdValidator,
             IValidator<ComentarioIdDto> comentarioIdValidator,
             CrearComentarioDtoValidator crearValidator,
-            ActualizarComentarioDtoValidator actualizarValidator)
+            ActualizarComentarioDtoValidator actualizarValidator,
+            IValidator<ComentarioQueryFilter> comentarioFilterValidator)
         {
             _comentarioService = comentarioService;
             _mapper = mapper;
@@ -39,6 +43,21 @@ namespace CochaVibes.Api.Controllers
             _comentarioIdValidator = comentarioIdValidator;
             _crearValidator = crearValidator;
             _actualizarValidator = actualizarValidator;
+            _comentarioFilterValidator = comentarioFilterValidator;
+        }
+
+        [HttpGet("dto/mapper/dapper")]
+        public async Task<IActionResult> GetComentariosFiltradosDapper([FromQuery] ComentarioQueryFilter filtro)
+        {
+            var validationResult = await _comentarioFilterValidator.ValidateAsync(filtro);
+
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
+
+            var comentarios = await _comentarioService.GetComentariosFiltradosAsync(filtro);
+            var response = new ApiResponse<IEnumerable<ComentarioListaDto>>(comentarios);
+
+            return Ok(response);
         }
 
         [HttpGet("dto/mapper/dapper/evento/{idEvento:int}")]

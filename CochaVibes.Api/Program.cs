@@ -7,6 +7,7 @@ using CochaVibes.Infrastructure.Repositories;
 using CochaVibes.Services.Interfaces;
 using CochaVibes.Services.Services;
 using CochaVibes.Services.Validators;
+using CochaVibes.Core.QueryFilters;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -43,6 +44,9 @@ namespace CochaVibes.Api
             builder.Services.AddScoped<ActualizarComentarioDtoValidator>();
             builder.Services.AddScoped<CrearAsistenciaDtoValidator>();
             builder.Services.AddScoped<ActualizarAsistenciaDtoValidator>();
+
+            builder.Services.AddTransient<IValidator<ComentarioQueryFilter>, ComentarioQueryFilterValidator>();
+            builder.Services.AddTransient<IValidator<AsistenciaQueryFilter>, AsistenciaQueryFilterValidator>();
 
             builder.Services.AddControllers()
                 .AddNewtonsoftJson(options =>

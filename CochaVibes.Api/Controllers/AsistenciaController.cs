@@ -1,5 +1,6 @@
 ﻿using CochaVibes.Api.Responses;
 using CochaVibes.Core.DTOs;
+using CochaVibes.Core.QueryFilters;
 using CochaVibes.Services.Interfaces;
 using CochaVibes.Services.Validators;
 using FluentValidation;
@@ -19,16 +20,34 @@ namespace CochaVibes.Api.Controllers
 
         private readonly IValidator<AsistenciaDto> _actualizarValidator;
 
+        private readonly IValidator<AsistenciaQueryFilter> _asistenciaFilterValidator;
+
         public AsistenciaController(
             IAsistenciaService asistenciaService,
             IValidator<EventoIdDto> eventoIdValidator,
             CrearAsistenciaDtoValidator crearValidator,
-            ActualizarAsistenciaDtoValidator actualizarValidator)
+            ActualizarAsistenciaDtoValidator actualizarValidator,
+            IValidator<AsistenciaQueryFilter> asistenciaFilterValidator)
         {
             _asistenciaService = asistenciaService;
             _eventoIdValidator = eventoIdValidator;
             _crearValidator = crearValidator;
             _actualizarValidator = actualizarValidator;
+            _asistenciaFilterValidator = asistenciaFilterValidator;
+        }
+
+        [HttpGet("dto/mapper/dapper")]
+        public async Task<IActionResult> GetAsistenciasFiltradasDapper([FromQuery] AsistenciaQueryFilter filtro)
+        {
+            var validationResult = await _asistenciaFilterValidator.ValidateAsync(filtro);
+
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
+
+            var asistencias = await _asistenciaService.GetAsistenciasFiltradasAsync(filtro);
+            var response = new ApiResponse<IEnumerable<AsistenciaListaDto>>(asistencias);
+
+            return Ok(response);
         }
 
         [HttpGet("dto/mapper/dapper/evento/{idEvento:int}")]
